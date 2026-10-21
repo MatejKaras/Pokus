@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>English Family Quest | Rodina anglicky</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #ede9fe 50%, #fce7f3 100%);
+      --card-bg: #ffffff;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-shadow: #3730a3;
+      --secondary: #0ea5e9;
+      --secondary-shadow: #0369a1;
+      --success: #22c55e;
+      --success-shadow: #15803d;
+      --danger: #ef4444;
+      --danger-shadow: #b91c1c;
+      --warning: #f59e0b;
+      --warning-shadow: #b45309;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 900px;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(8px, 2vh, 20px) clamp(10px, 3vw, 24px);
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      padding: clamp(6px, 1.2vh, 12px) clamp(10px, 2vw, 18px);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      border: 2px solid #ffffff;
+      flex-shrink: 0;
+    }
+
+    .btn-icon {
+      min-width: 48px;
+      min-height: 48px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      background: #f8fafc;
+      font-size: clamp(1.2rem, 2.5vh, 1.5rem);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s, background 0.2s;
+      box-shadow: 0 3px 0 var(--border-color);
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 0 12px;
+      gap: 6px;
+    }
+
+    .btn-icon:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 var(--border-color);
+    }
+
+    .stats-group {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 1.5vw, 14px);
+      flex-wrap: nowrap;
+    }
+
+    .stat-pill {
+      background: #f1f5f9;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: clamp(0.85rem, 2vh, 1.05rem);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+
+    .stat-pill.streak {
+      background: #fff7ed;
+      border-color: #fed7aa;
+      color: #ea580c;
+    }
+
+    .stat-pill.score {
+      background: #fefce8;
+      border-color: #fef08a;
+      color: #ca8a04;
+    }
+
+    /* PROGRESS BAR */
+    .progress-wrap {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: clamp(4px, 1vh, 10px);
+      flex-shrink: 0;
+      border: 1px solid #cbd5e1;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4f46e5, #06b6d4);
+      border-radius: 999px;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* SCREENS */
+    .screen {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+      padding: clamp(6px, 1.5vh, 14px) 0;
+      gap: clamp(8px, 1.5vh, 16px);
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* MENU SCREEN */
+    .hero-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: clamp(12px, 2.5vh, 24px);
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(79, 70, 229, 0.08);
+      border: 2px solid #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(4px, 1vh, 10px);
+    }
+
+    .hero-emoji {
+      font-size: clamp(2.4rem, 6vh, 4.2rem);
+      line-height: 1.1;
+    }
+
+    .hero-title {
+      font-size: clamp(1.35rem, 3.5vh, 2.2rem);
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.85rem, 1.9vh, 1.05rem);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .modes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(8px, 1.6vh, 14px);
+      flex: 1;
+      align-content: center;
+    }
+
+    @media (min-width: 680px) {
+      .modes-grid {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: stretch;
+      }
+    }
+
+    .mode-card {
+      background: var(--card-bg);
+      border: 3px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: clamp(12px, 2vh, 22px);
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      transition: transform 0.12s, border-color 0.2s;
+      box-shadow: 0 5px 0 #cbd5e1;
+      min-height: 68px;
+    }
+
+    @media (min-width: 680px) {
+      .mode-card {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    .mode-card:hover {
+      border-color: var(--primary);
+    }
+
+    .mode-card:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #cbd5e1;
+    }
+
+    .mode-icon {
+      font-size: clamp(2rem, 5vh, 3.2rem);
+      flex-shrink: 0;
+    }
+
+    .mode-info h3 {
+      font-size: clamp(1rem, 2.2vh, 1.25rem);
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+
+    .mode-info p {
+      font-size: clamp(0.8rem, 1.6vh, 0.95rem);
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .menu-footer {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    /* QUESTION CARD */
+    .question-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: clamp(12px, 2.5vh, 24px);
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+      border: 2px solid #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 1.4vh, 12px);
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    .mode-badge {
+      background: #e0e7ff;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: clamp(0.75rem, 1.5vh, 0.9rem);
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .q-emoji {
+      font-size: clamp(2.5rem, 7.5vh, 4.5rem);
+      line-height: 1.1;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+    }
+
+    .q-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .q-title {
+      font-size: clamp(1.2rem, 3.4vh, 2rem);
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.25;
+    }
+
+    .btn-speak {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: var(--secondary);
+      color: white;
+      font-size: 1.35rem;
+      cursor: pointer;
+      box-shadow: 0 4px 0 var(--secondary-shadow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.1s;
+    }
+
+    .btn-speak:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--secondary-shadow);
+    }
+
+    .hint-box {
+      font-size: clamp(0.85rem, 1.9vh, 1.05rem);
+      color: var(--text-muted);
+      font-weight: 600;
+      min-height: 1.4em;
+    }
+
+    .btn-hint {
+      background: #fef3c7;
+      color: #b45309;
+      border: 2px solid #fde68a;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: clamp(0.8rem, 1.7vh, 0.95rem);
+      cursor: pointer;
+      min-height: 40px;
+    }
+
+    /* OPTIONS GRID (MODES 1 & 2) */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(8px, 1.6vh, 14px);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 480px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      min-height: clamp(50px, 8.5vh, 72px);
+      background: var(--card-bg);
+      border: 3px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: clamp(1rem, 2.4vh, 1.3rem);
+      font-weight: 800;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: 0 4px 0 #94a3b8;
+      transition: transform 0.1s, background 0.2s, border-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px;
+      gap: 8px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: #f8fafc;
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #94a3b8;
+    }
+
+    .option-btn.correct {
+      background: var(--success) !important;
+      border-color: var(--success-shadow) !important;
+      color: white !important;
+      box-shadow: 0 4px 0 var(--success-shadow) !important;
+    }
+
+    .option-btn.wrong {
+      background: var(--danger) !important;
+      border-color: var(--danger-shadow) !important;
+      color: white !important;
+      box-shadow: 0 4px 0 var(--danger-shadow) !important;
+      animation: shake 0.4s ease;
+    }
+
+    .opt-speak {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      color: var(--text-main);
+    }
+
+    /* SCRAMBLE AREA (MODE 3) */
+    .scramble-container {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1.6vh, 14px);
+      flex-shrink: 0;
+    }
+
+    .slots-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(5px, 1.2vw, 10px);
+      min-height: 54px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: var(--radius-md);
+      border: 2px dashed #94a3b8;
+    }
+
+    .letter-slot {
+      width: clamp(38px, 7.5vw, 52px);
+      height: clamp(44px, 7.5vh, 56px);
+      border-radius: 10px;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      font-size: clamp(1.1rem, 2.6vh, 1.5rem);
+      font-weight: 900;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #cbd5e1;
+    }
+
+    .letter-slot.filled {
+      border-color: var(--primary);
+      background: #eef2ff;
+    }
+
+    .letter-slot.correct {
+      background: var(--success);
+      border-color: var(--success-shadow);
+      color: white;
+    }
+
+    .letter-slot.wrong {
+      background: var(--danger);
+      border-color: var(--danger-shadow);
+      color: white;
+      animation: shake 0.4s ease;
+    }
+
+    .pool-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(6px, 1.4vw, 10px);
+    }
+
+    .letter-tile {
+      min-width: clamp(44px, 8.5vw, 56px);
+      min-height: clamp(48px, 7.8vh, 58px);
+      border-radius: 12px;
+      background: #ffffff;
+      border: 2px solid #94a3b8;
+      box-shadow: 0 4px 0 #64748b;
+      font-size: clamp(1.15rem, 2.6vh, 1.5rem);
+      font-weight: 900;
+      color: var(--text-main);
+      cursor: pointer;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    .letter-tile:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #64748b;
+    }
+
+    .letter-tile.used {
+      opacity: 0.22;
+      pointer-events: none;
+      transform: translateY(3px);
+      box-shadow: none;
+    }
+
+    .scramble-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-action {
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 800;
+      font-size: clamp(0.9rem, 2vh, 1.05rem);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: white;
+      background: var(--primary);
+      box-shadow: 0 4px 0 var(--primary-shadow);
+      transition: transform 0.1s;
+    }
+
+    .btn-action:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--primary-shadow);
+    }
+
+    .btn-action.secondary {
+      background: #64748b;
+      box-shadow: 0 4px 0 #334155;
+    }
+
+    .btn-action.warning {
+      background: var(--warning);
+      box-shadow: 0 4px 0 var(--warning-shadow);
+    }
+
+    /* FEEDBACK BAR */
+    .feedback-bar {
+      min-height: 52px;
+      border-radius: var(--radius-md);
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 800;
+      font-size: clamp(0.95rem, 2.1vh, 1.15rem);
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+
+    .feedback-bar.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .feedback-bar.good {
+      background: #dcfce7;
+      border: 2px solid #86efac;
+      color: #166534;
+    }
+
+    .feedback-bar.bad {
+      background: #fee2e2;
+      border: 2px solid #fca5a5;
+      color: #991b1b;
+    }
+
+    .btn-next {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--success);
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 3px 0 var(--success-shadow);
+      white-space: nowrap;
+    }
+
+    /* SUMMARY SCREEN */
+    .summary-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: clamp(14px, 2.5vh, 24px);
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+      gap: 10px;
+    }
+
+    .stars-row {
+      font-size: clamp(2.2rem, 6vh, 3.6rem);
+      letter-spacing: 6px;
+    }
+
+    .mistakes-box {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 10px;
+      text-align: left;
+    }
+
+    .mistake-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: clamp(0.85rem, 1.8vh, 1rem);
+      font-weight: 700;
+    }
+
+    .mistake-item:last-child {
+      border-bottom: none;
+    }
+
+    /* VOCAB MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      width: 100%;
+      max-width: 650px;
+      max-height: 86dvh;
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .vocab-list {
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .vocab-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      cursor: pointer;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- TOP BAR -->
+    <header class="top-bar">
+      <button class="btn-icon" id="btnHome" title="Domů">🏠 <span style="font-size:0.9rem">Domů</span></button>
+      <div class="stats-group">
+        <div class="stat-pill" id="questionCounter" style="display:none">Otázka 1/10</div>
+        <div class="stat-pill streak" title="Správně v řadě napoprvé">🔥 <span id="streakVal">0</span></div>
+        <div class="stat-pill score" title="Skóre">⭐ <span id="scoreVal">0</span></div>
+      </div>
+    </header>
+
+    <div class="progress-wrap" id="progressWrap" style="visibility:hidden">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- SCREEN 1: MENU -->
+    <main class="screen active" id="menuScreen">
+      <div class="hero-card">
+        <div class="hero-emoji">👨‍👩‍👧‍👦🇬🇧</div>
+        <h1 class="hero-title">Family Quest: Rodina</h1>
+        <p class="hero-sub">Procvič si anglická slovíčka pro 4. a 5. třídu! Vyber si herní mód:</p>
+      </div>
+
+      <div class="modes-grid">
+        <button class="mode-card" onclick="startGame(1)">
+          <div class="mode-icon">⚡</div>
+          <div class="mode-info">
+            <h3>1. Rychlý překlad</h3>
+            <p>Uvidíš české slovo s Emoji a vybereš správný anglický překlad ze 4 možností.</p>
+          </div>
+        </button>
+
+        <button class="mode-card" onclick="startGame(2)">
+          <div class="mode-icon">🕵️‍♂️</div>
+          <div class="mode-info">
+            <h3>2. Rodinné hádanky</h3>
+            <p>Who is it? Přečti nebo poslechni si anglickou větu a uhodni člena rodiny.</p>
+          </div>
+        </button>
+
+        <button class="mode-card" onclick="startGame(3)">
+          <div class="mode-icon">🧩</div>
+          <div class="mode-info">
+            <h3>3. Přesmyčky</h3>
+            <p>Word Scramble! Poskládej anglické slovíčko klikáním na rozházená písmenka.</p>
+          </div>
+        </button>
+      </div>
+
+      <div class="menu-footer">
+        <button class="btn-action secondary" onclick="toggleVocabModal(true)">📖 Přehled slovíček s výslovností (19)</button>
+      </div>
+    </main>
+
+    <!-- SCREEN 2: GAMEPLAY -->
+    <main class="screen" id="gameScreen">
+      <div class="question-card">
+        <span class="mode-badge" id="modeBadge">Mód 1</span>
+        <div class="q-emoji" id="qEmoji">👩</div>
+        <div class="q-main-row">
+          <h2 class="q-title" id="qTitle">maminka</h2>
+          <button class="btn-speak" id="btnSpeakPrompt" title="Přečíst nahlas">🔊</button>
+        </div>
+        <div class="hint-box" id="hintBox"></div>
+        <button class="btn-hint" id="btnHint" style="display:none">💡 Zobrazit českou nápovědu</button>
+      </div>
+
+      <!-- MODE 1 & 2 OPTIONS -->
+      <div class="options-grid" id="optionsGrid"></div>
+
+      <!-- MODE 3 SCRAMBLE -->
+      <div class="scramble-container" id="scrambleContainer" style="display:none">
+        <div class="slots-row" id="slotsRow"></div>
+        <div class="pool-row" id="poolRow"></div>
+        <div class="scramble-controls">
+          <button class="btn-action secondary" id="btnBackspace">⌫ Smazat písmeno</button>
+          <button class="btn-action warning" id="btnScrambleHint">💡 Nápověda písmene</button>
+        </div>
+      </div>
+
+      <!-- FEEDBACK BAR -->
+      <div class="feedback-bar" id="feedbackBar">
+        <span id="feedbackText">Awesome!</span>
+        <button class="btn-next" id="btnNext">Další ➔</button>
+      </div>
+    </main>
+
+    <!-- SCREEN 3: SUMMARY -->
+    <main class="screen" id="summaryScreen">
+      <div class="summary-card">
+        <div>
+          <div class="stars-row" id="summaryStars">⭐⭐⭐</div>
+          <h2 class="hero-title" id="summaryTitle">Parádní práce!</h2>
+          <p class="hero-sub" id="summarySub">Tvoje konečné skóre: 100 bodů</p>
+        </div>
+
+        <div class="mistakes-box" id="mistakesBox"></div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%">
+          <button class="btn-action" id="btnPlayAgain">🔄 Hrát znovu</button>
+          <button class="btn-action secondary" onclick="showMenu()">🏠 Změnit mód</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- VOCABULARY MODAL -->
+  <div class="modal-overlay" id="vocabModal">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <h3 style="font-size:1.3rem; font-weight:900; color:var(--primary)">📖 Slovníček: Family</h3>
+        <button class="btn-icon" onclick="toggleVocabModal(false)">✖</button>
+      </div>
+      <p style="font-size:0.9rem; color:var(--text-muted)">Klikni na libovolné slovíčko pro přehrání anglické výslovnosti 🔊</p>
+      <div class="vocab-list" id="vocabList"></div>
+    </div>
+  </div>
+
+  <script>
+    // 1. DATABASE: VOCABULARY (19 items)
+    const VOCABULARY = [
+      { id: 'mother', en: 'mother / mum', primaryEn: 'mother', speak: 'mother, mum', cs: 'maminka', emoji: '👩' },
+      { id: 'father', en: 'father / dad', primaryEn: 'father', speak: 'father, dad', cs: 'tatínek', emoji: '👨' },
+      { id: 'parents', en: 'parents', primaryEn: 'parents', speak: 'parents', cs: 'rodiče', emoji: '👫' },
+      { id: 'sister', en: 'sister', primaryEn: 'sister', speak: 'sister', cs: 'sestra', emoji: '👧' },
+      { id: 'brother', en: 'brother', primaryEn: 'brother', speak: 'brother', cs: 'bratr', emoji: '👦' },
+      { id: 'grandmother', en: 'grandmother / grandma', primaryEn: 'grandma', speak: 'grandmother, grandma', cs: 'babička', emoji: '👵' },
+      { id: 'grandfather', en: 'grandfather / grandpa', primaryEn: 'grandpa', speak: 'grandfather, grandpa', cs: 'dědeček', emoji: '👴' },
+      { id: 'grandparents', en: 'grandparents', primaryEn: 'grandparents', speak: 'grandparents', cs: 'prarodiče', emoji: '👵👴' },
+      { id: 'aunt', en: 'aunt', primaryEn: 'aunt', speak: 'aunt', cs: 'teta', emoji: '👩‍🦱' },
+      { id: 'uncle', en: 'uncle', primaryEn: 'uncle', speak: 'uncle', cs: 'strýček', emoji: '🧔' },
+      { id: 'cousin', en: 'cousin', primaryEn: 'cousin', speak: 'cousin', cs: 'bratranec / sestřenice', emoji: '🧑' },
+      { id: 'son', en: 'son', primaryEn: 'son', speak: 'son', cs: 'syn', emoji: '👦' },
+      { id: 'daughter', en: 'daughter', primaryEn: 'daughter', speak: 'daughter', cs: 'dcera', emoji: '👧' },
+      { id: 'children', en: 'children', primaryEn: 'children', speak: 'children', cs: 'děti', emoji: '🧒👧' },
+      { id: 'baby', en: 'baby', primaryEn: 'baby', speak: 'baby', cs: 'miminko', emoji: '👶' },
+      { id: 'twins', en: 'twins', primaryEn: 'twins', speak: 'twins', cs: 'dvojčata', emoji: '👯' },
+      { id: 'husband', en: 'husband', primaryEn: 'husband', speak: 'husband', cs: 'manžel', emoji: '🤵' },
+      { id: 'wife', en: 'wife', primaryEn: 'wife', speak: 'wife', cs: 'manželka', emoji: '👰' },
+      { id: 'pet', en: 'pet', primaryEn: 'pet', speak: 'pet', cs: 'domácí mazlíček', emoji: '🐶' }
+    ];
+
+    // 2. DATABASE: RIDDLES FOR MODE 2 (14 sentences)
+    const RIDDLES = [
+      { sentence: "My mother's mother is my...", hint: "Maminka mojí maminky je moje...", answerId: 'grandmother', emoji: '👵' },
+      { sentence: "My father's brother is my...", hint: "Bratr mého tatínka je můj...", answerId: 'uncle', emoji: '🧔' },
+      { sentence: "My uncle's child is my...", hint: "Dítě mého strýčka je můj...", answerId: 'cousin', emoji: '🧑' },
+      { sentence: "My mother and father are my...", hint: "Moje maminka a tatínek jsou moji...", answerId: 'parents', emoji: '👫' },
+      { sentence: "My parents' son is my...", hint: "Syn mých rodičů je můj...", answerId: 'brother', emoji: '👦' },
+      { id: 6, sentence: "My parents' daughter is my...", hint: "Dcera mých rodičů je moje...", answerId: 'sister', emoji: '👧' },
+      { sentence: "My father's wife is my...", hint: "Manželka mého tatínka je moje...", answerId: 'mother', emoji: '👩' },
+      { sentence: "My mother's sister is my...", hint: "Sestra mojí maminky je moje...", answerId: 'aunt', emoji: '👩‍🦱' },
+      { sentence: "My father's father is my...", hint: "Tatínek mého tatínka je můj...", answerId: 'grandfather', emoji: '👴' },
+      { sentence: "My grandma and grandpa are my...", hint: "Moje babička a dědeček jsou moji...", answerId: 'grandparents', emoji: '👵👴' },
+      { sentence: "My mother's husband is my...", hint: "Manžel mojí maminky je můj...", answerId: 'father', emoji: '👨' },
+      { sentence: "A very young child is a...", hint: "Velmi malé dítě je...", answerId: 'baby', emoji: '👶' },
+      { sentence: "Two children born on the same day are...", hint: "Dvě děti narozené ve stejný den jsou...", answerId: 'twins', emoji: '👯' },
+      { sentence: "A dog or a cat at home is our family...", hint: "Pes nebo kočka doma je náš rodinný...", answerId: 'pet', emoji: '🐶' }
+    ];
+
+    const PRAISES = ["Awesome! 🎉", "Great job! 🌟", "Brilliant! 🚀", "Fantastic! 👏", "Well done! 🏆", "Super! ⚡"];
+
+    // STATE
+    let currentMode = 1;
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let firstTry = true;
+    let mistakes = [];
+    let lockInput = false;
+    let autoAdvanceTimer = null;
+
+    // Scramble state
+    let targetWord = "";
+    let scramblePool = [];
+    let userSlots = [];
+
+    // WEB AUDIO API SOUND GENERATOR
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        if (type === 'correct') {
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.07);
+            gain.gain.setValueAtTime(0.18, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.22);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.24);
+          });
+        } else if (type === 'wrong') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(190, now);
+          osc.frequency.linearRampToValueAtTime(130, now + 0.25);
+          gain.gain.setValueAtTime(0.16, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        }
+      } catch (e) {}
+    }
+
+    // WEB SPEECH API (TTS)
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-GB';
+      utter.rate = 0.92;
+      const voices = window.speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang.includes('en-GB')) || voices.find(v => v.lang.includes('en-US')) || voices.find(v => v.lang.startsWith('en'));
+      if (enVoice) utter.voice = enVoice;
+      window.speechSynthesis.speak(utter);
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+    // UTILS
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getVocabById(id) {
+      return VOCABULARY.find(v => v.id === id);
+    }
+
+    // NAVIGATION
+    function switchScreen(screenId) {
+      clearTimeout(autoAdvanceTimer);
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      const inGame = screenId === 'gameScreen';
+      document.getElementById('questionCounter').style.display = inGame ? 'flex' : 'none';
+      document.getElementById('progressWrap').style.visibility = inGame ? 'visible' : 'hidden';
+    }
+
+    function showMenu() {
+      switchScreen('menuScreen');
+    }
+
+    document.getElementById('btnHome').addEventListener('click', showMenu);
+
+    // START GAME
+    function startGame(mode) {
+      currentMode = mode;
+      currentIndex = 0;
+      score = 0;
+      streak = 0;
+      mistakes = [];
+      updateStatsUI();
+
+      if (mode === 1) {
+        questions = shuffle(VOCABULARY).slice(0, 10);
+      } else if (mode === 2) {
+        questions = shuffle(RIDDLES).slice(0, 10);
+      } else if (mode === 3) {
+        questions = shuffle(VOCABULARY).slice(0, 10);
+      }
+
+      switchScreen('gameScreen');
+      renderQuestion();
+    }
+
+    function updateStatsUI() {
+      document.getElementById('scoreVal').textContent = score;
+      document.getElementById('streakVal').textContent = streak;
+      document.getElementById('questionCounter').textContent = `Otázka ${currentIndex + 1}/10`;
+      document.getElementById('progressFill').style.width = `${(currentIndex / 10) * 100}%`;
+    }
+
+    // RENDER CURRENT QUESTION
+    function renderQuestion() {
+      clearTimeout(autoAdvanceTimer);
+      lockInput = false;
+      firstTry = true;
+      updateStatsUI();
+
+      const feedbackBar = document.getElementById('feedbackBar');
+      feedbackBar.className = 'feedback-bar';
+
+      const qEmoji = document.getElementById('qEmoji');
+      const qTitle = document.getElementById('qTitle');
+      const btnSpeakPrompt = document.getElementById('btnSpeakPrompt');
+      const hintBox = document.getElementById('hintBox');
+      const btnHint = document.getElementById('btnHint');
+      const optionsGrid = document.getElementById('optionsGrid');
+      const scrambleContainer = document.getElementById('scrambleContainer');
+      const modeBadge = document.getElementById('modeBadge');
+
+      hintBox.textContent = '';
+      btnHint.style.display = 'none';
+
+      if (currentMode === 1) {
+        const item = questions[currentIndex];
+        modeBadge.textContent = '⚡ Mód 1: Rychlý překlad';
+        qEmoji.textContent = item.emoji;
+        qTitle.textContent = item.cs;
+        btnSpeakPrompt.style.display = 'none';
+        hintBox.textContent = 'Vyber správný anglický překlad:';
+
+        optionsGrid.style.display = 'grid';
+        scrambleContainer.style.display = 'none';
+        renderMultipleChoice(item);
+
+      } else if (currentMode === 2) {
+        const riddle = questions[currentIndex];
+        const answerItem = getVocabById(riddle.answerId);
+        modeBadge.textContent = '🕵️‍♂️ Mód 2: Who is it?';
+        qEmoji.textContent = riddle.emoji;
+        qTitle.textContent = riddle.sentence;
+        btnSpeakPrompt.style.display = 'inline-flex';
+        btnSpeakPrompt.onclick = () => speakText(riddle.sentence);
+
+        btnHint.style.display = 'inline-block';
+        btnHint.onclick = () => {
+          hintBox.textContent = `🇨🇿 ${riddle.hint}`;
+          btnHint.style.display = 'none';
+        };
+
+        optionsGrid.style.display = 'grid';
+        scrambleContainer.style.display = 'none';
+        renderMultipleChoice(answerItem);
+        speakText(riddle.sentence);
+
+      } else if (currentMode === 3) {
+        const item = questions[currentIndex];
+        modeBadge.textContent = '🧩 Mód 3: Přesmyčky';
+        qEmoji.textContent = item.emoji;
+        qTitle.textContent = item.cs;
+        btnSpeakPrompt.style.display = 'inline-flex';
+        btnSpeakPrompt.onclick = () => speakText(item.primaryEn);
+        hintBox.textContent = item.en.includes('/') ? `Poskládej slovo (${item.primaryEn.length} písmen):` : 'Poskládej anglické slovíčko:';
+
+        optionsGrid.style.display = 'none';
+        scrambleContainer.style.display = 'flex';
+        setupScramble(item);
+      }
+    }
+
+    // MULTIPLE CHOICE RENDERER (MODES 1 & 2)
+    function renderMultipleChoice(correctItem) {
+      const optionsGrid = document.getElementById('optionsGrid');
+      optionsGrid.innerHTML = '';
+
+      const distractors = shuffle(VOCABULARY.filter(v => v.id !== correctItem.id)).slice(0, 3);
+      const choices = shuffle([correctItem, ...distractors]);
+
+      choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = currentMode === 1 ? choice.en : choice.primaryEn;
+
+        const speakSpan = document.createElement('span');
+        speakSpan.className = 'opt-speak';
+        speakSpan.textContent = '🔊';
+        speakSpan.title = 'Poslechnout výslovnost';
+        speakSpan.addEventListener('click', (e) => {
+          e.stopPropagation();
+          speakText(choice.primaryEn);
+        });
+
+        btn.appendChild(labelSpan);
+        btn.appendChild(speakSpan);
+
+        btn.addEventListener('click', () => handleChoiceClick(btn, choice, correctItem));
+        optionsGrid.appendChild(btn);
+      });
+    }
+
+    function handleChoiceClick(btn, chosenItem, correctItem) {
+      if (lockInput || btn.classList.contains('wrong')) return;
+
+      if (chosenItem.id === correctItem.id) {
+        lockInput = true;
+        btn.classList.add('correct');
+        onCorrectAnswer(correctItem);
+      } else {
+        btn.classList.add('wrong');
+        onWrongAnswer(correctItem);
+      }
+    }
+
+    // MODE 3: WORD SCRAMBLE
+    function setupScramble(item) {
+      targetWord = item.primaryEn.toLowerCase();
+      const letters = targetWord.split('');
+      let shuffled = shuffle(letters);
+      if (shuffled.join('') === targetWord && targetWord.length > 1) {
+        [shuffled[0], shuffled[shuffled.length - 1]] = [shuffled[shuffled.length - 1], shuffled[0]];
+      }
+
+      scramblePool = shuffled.map((char, idx) => ({ id: idx, char, used: false }));
+      userSlots = [];
+      renderScrambleUI(item);
+    }
+
+    function renderScrambleUI(item) {
+      const slotsRow = document.getElementById('slotsRow');
+      const poolRow = document.getElementById('poolRow');
+      slotsRow.innerHTML = '';
+      poolRow.innerHTML = '';
+
+      for (let i = 0; i < targetWord.length; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'letter-slot' + (userSlots[i] ? ' filled' : '');
+        slot.textContent = userSlots[i] ? userSlots[i].char : '';
+        if (userSlots[i] && !lockInput) {
+          slot.addEventListener('click', () => removeLetterAt(i, item));
+        }
+        slotsRow.appendChild(slot);
+      }
+
+      scramblePool.forEach(tileObj => {
+        const tile = document.createElement('button');
+        tile.className = 'letter-tile' + (tileObj.used ? ' used' : '');
+        tile.textContent = tileObj.char;
+        tile.disabled = tileObj.used || lockInput;
+        tile.addEventListener('click', () => selectPoolLetter(tileObj, item));
+        poolRow.appendChild(tile);
+      });
+    }
+
+    function selectPoolLetter(tileObj, item) {
+      if (lockInput || tileObj.used || userSlots.length >= targetWord.length) return;
+      playSound('click');
+      tileObj.used = true;
+      userSlots.push(tileObj);
+      renderScrambleUI(item);
+
+      if (userSlots.length === targetWord.length) {
+        checkScrambleWord(item);
+      }
+    }
+
+    function removeLetterAt(slotIdx, item) {
+      if (lockInput) return;
+      playSound('click');
+      const removed = userSlots.splice(slotIdx, 1)[0];
+      if (removed) removed.used = false;
+      renderScrambleUI(item);
+    }
+
+    document.getElementById('btnBackspace').addEventListener('click', () => {
+      if (lockInput || userSlots.length === 0) return;
+      const currentItem = questions[currentIndex];
+      removeLetterAt(userSlots.length - 1, currentItem);
+    });
+
+    document.getElementById('btnScrambleHint').addEventListener('click', () => {
+      if (lockInput || userSlots.length >= targetWord.length) return;
+      const currentItem = questions[currentIndex];
+      const nextIndex = userSlots.length;
+      const neededChar = targetWord[nextIndex];
+      const availableTile = scramblePool.find(t => !t.used && t.char === neededChar);
+      if (availableTile) {
+        selectPoolLetter(availableTile, currentItem);
+      }
+    });
+
+    function checkScrambleWord(item) {
+      const attempt = userSlots.map(s => s.char).join('');
+      const slots = document.querySelectorAll('.letter-slot');
+      if (attempt === targetWord) {
+        lockInput = true;
+        slots.forEach(s => s.classList.add('correct'));
+        onCorrectAnswer(item);
+      } else {
+        slots.forEach(s => s.classList.add('wrong'));
+        onWrongAnswer(item);
+        setTimeout(() => {
+          userSlots.forEach(s => s.used = false);
+          userSlots = [];
+          renderScrambleUI(item);
+        }, 650);
+      }
+    }
+
+    // FEEDBACK & SCORING
+    function onCorrectAnswer(vocabItem) {
+      playSound('correct');
+      speakText(vocabItem.primaryEn);
+
+      if (firstTry) {
+        score += 10;
+        streak += 1;
+      } else {
+        score += 5;
+      }
+      updateStatsUI();
+
+      const praise = PRAISES[Math.floor(Math.random() * PRAISES.length)];
+      const feedbackBar = document.getElementById('feedbackBar');
+      const feedbackText = document.getElementById('feedbackText');
+      feedbackText.textContent = `${praise} (${vocabItem.en} = ${vocabItem.cs})`;
+      feedbackBar.className = 'feedback-bar show good';
+
+      autoAdvanceTimer = setTimeout(nextQuestion, 2300);
+    }
+
+    function onWrongAnswer(vocabItem) {
+      playSound('wrong');
+      if (firstTry) {
+        firstTry = false;
+        streak = 0;
+        if (!mistakes.some(m => m.id === vocabItem.id)) {
+          mistakes.push(vocabItem);
+        }
+        updateStatsUI();
+      }
+      const feedbackBar = document.getElementById('feedbackBar');
+      const feedbackText = document.getElementById('feedbackText');
+      feedbackText.textContent = 'Zkus to ještě jednou! 💪';
+      feedbackBar.className = 'feedback-bar show bad';
+    }
+
+    function nextQuestion() {
+      clearTimeout(autoAdvanceTimer);
+      currentIndex++;
+      if (currentIndex < 10) {
+        renderQuestion();
+      } else {
+        showSummary();
+      }
+    }
+
+    document.getElementById('btnNext').addEventListener('click', nextQuestion);
+
+    // SUMMARY SCREEN
+    function showSummary() {
+      document.getElementById('progressFill').style.width = '100%';
+      switchScreen('summaryScreen');
+
+      const starsEl = document.getElementById('summaryStars');
+      const titleEl = document.getElementById('summaryTitle');
+      const subEl = document.getElementById('summarySub');
+      const mistakesBox = document.getElementById('mistakesBox');
+
+      let stars = '⭐⭐⭐';
+      let msg = 'Excelentní! Jsi rodinný šampion! 🏆';
+      if (score < 85 && score >= 60) {
+        stars = '⭐⭐';
+        msg = 'Skvělá práce! Jen tak dál! 👏';
+      } else if (score < 60) {
+        stars = '⭐';
+        msg = 'Dobrý trénink! Zkus si slovíčka zopakovat. 💪';
+      }
+
+      starsEl.textContent = stars;
+      titleEl.textContent = msg;
+      subEl.textContent = `Získal(a) jsi ${score} ze 100 možných bodů.`;
+
+      if (mistakes.length === 0) {
+        mistakesBox.innerHTML = `<div style="text-align:center; padding:18px; color:var(--success); font-weight:800;">🎉 Ani jedna chyba! Všechna slovíčka jsi zvládl(a) napoprvé!</div>`;
+      } else {
+        mistakesBox.innerHTML = `<div style="font-weight:800; margin-bottom:6px; color:var(--danger);">📌 Slovíčka k zopakování (klikni na 🔊):</div>`;
+        mistakes.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'mistake-item';
+          row.innerHTML = `
+            <span>${item.emoji} <strong>${item.en}</strong> – ${item.cs}</span>
+            <button class="btn-speak" style="width:36px; height:36px; font-size:1rem;" onclick="speakText('${item.primaryEn}')">🔊</button>
+          `;
+          mistakesBox.appendChild(row);
+        });
+      }
+
+      document.getElementById('btnPlayAgain').onclick = () => startGame(currentMode);
+    }
+
+    // VOCABULARY MODAL
+    function toggleVocabModal(open) {
+      const modal = document.getElementById('vocabModal');
+      if (open) {
+        const list = document.getElementById('vocabList');
+        list.innerHTML = '';
+        VOCABULARY.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'vocab-card';
+          card.innerHTML = `
+            <div>
+              <div style="font-weight:800; color:var(--primary)">${item.emoji} ${item.en}</div>
+              <div style="font-size:0.85rem; color:var(--text-muted); font-weight:600">${item.cs}</div>
+            </div>
+            <span style="font-size:1.2rem">🔊</span>
+          `;
+          card.addEventListener('click', () => speakText(item.speak));
+          list.appendChild(card);
+        });
+        modal.classList.add('open');
+      } else {
+        modal.classList.remove('open');
+      }
+    }
+  </script>
+</body>
+</html>
